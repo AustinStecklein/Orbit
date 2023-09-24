@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Objects>
+   <Object name="Earth" mass="5.97219E24" radius="50" color="0">
+      <Velocity x="0" y="0" z="0"/>
+      <Position x="0" y="0" z="0" />
+   </Object>
+   <Object name="moon" mass="7.34767309E22" radius="15" color="5">
+      <Velocity x="0" y="2" z="0"/>
+      <Position x="600" y="0" z="0" />
+   </Object>
+   <Object name="rocket" mass="7.34767309E5" radius="5" color="4">
+      <Velocity x="0" y="2.98" z="0"/>
+      <Position x="630" y="0" z="0" />
+   </Object>
+</Objects>
