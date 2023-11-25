@@ -10,6 +10,8 @@ namespace OrbitMath
             double z;
 
             Vector3D(): x(0), y(0), z(0) {}
+            //For 2d to 3d conversion
+            Vector3D(double x, double y): x(x), y(y), z(0) {}
             Vector3D(double x, double y, double z): x(x), y(y), z(z) {}
 
             /****************************************
@@ -58,7 +60,7 @@ namespace OrbitMath
                 return *this;
             }
 
-            friend Vector3D operator+(Vector3D & lhs, const Vector3D & rhs)
+            friend Vector3D operator+(const Vector3D & lhs, const Vector3D & rhs)
             {
                 return Vector3D(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
             }
@@ -71,7 +73,7 @@ namespace OrbitMath
                 return *this;
             }
 
-            friend Vector3D operator-(Vector3D & lhs, const Vector3D & rhs) 
+            friend Vector3D operator-(const Vector3D & lhs, const Vector3D & rhs) 
             {
                 return Vector3D(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
             }
@@ -84,12 +86,12 @@ namespace OrbitMath
                 return *this;
             }
 
-            friend Vector3D operator*(Vector3D & lhs, const double & rhs) 
+            friend Vector3D operator*(const Vector3D & lhs, const double & rhs) 
             {
                 return Vector3D(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
             }
 
-            friend Vector3D operator*(double & lhs, const Vector3D & rhs) { return Vector3D(rhs.x * lhs, rhs.y * lhs, rhs.z * lhs); }
+            friend Vector3D operator*(const double lhs, const Vector3D & rhs) { return Vector3D(rhs.x * lhs, rhs.y * lhs, rhs.z * lhs); }
 
             Vector3D& operator/=(const double & rhs)
             {
@@ -99,24 +101,33 @@ namespace OrbitMath
                 return *this;
             }
 
-            friend Vector3D operator/(Vector3D & lhs, const double & rhs) 
+            friend Vector3D operator/(const Vector3D & lhs, const double & rhs) 
             {
                 return Vector3D(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
             }
 
-            friend Vector3D operator/(double & lhs, const Vector3D & rhs) { return Vector3D(rhs.x / lhs, rhs.y / lhs, rhs.z / lhs); }
+            friend Vector3D operator/ (const double & lhs, const Vector3D & rhs) { return Vector3D(rhs.x / lhs, rhs.y / lhs, rhs.z / lhs); }
 
             friend bool operator==(const Vector3D& lhs, const Vector3D& rhs) {return (lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.z == rhs.z);}
             friend bool operator!=(const Vector3D& lhs, const Vector3D& rhs) { return !(lhs == rhs);}
             
             void operator=(const Vector3D &rhs)
             {
-                x = rhs.x;
-                y = rhs.y;
-                z = rhs.z;
+                if(rhs.x < .0000000001 && rhs.x > -.0000000001)
+                    x = 0;
+                else
+                    x = rhs.x;
+                if(rhs.y < .0000000001&& rhs.y > -.0000000001)
+                    y = 0;
+                else
+                    y = rhs.y;
+                if(rhs.z < .0000000001&& rhs.y > -.0000000001)
+                    z = 0;
+                else
+                    z = rhs.z;
             }
 
-            operator sf::Vector3f() const { return sf::Vector3f(x, y, x); }
+            
             /****************************************
             * Operator overloads end
             ****************************************/

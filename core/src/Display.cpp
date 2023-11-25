@@ -8,11 +8,13 @@ void Display::buildView()
     window->setVerticalSyncEnabled(true);
     view = new sf::View(sf::Vector2f(0, 0), sf::Vector2f(WINDOW_SIZE, WINDOW_SIZE));
     window->setView(*view);
+     //rocket = new Rocket(*(objects.begin()), 5.97219E24, sf::Vector2f(100.f, 100.f), objects, 1);
 }
-void Display::setFocus(GameObject * focus) {this->focus = focus;}
+void Display::setFocus(CelestialBody * focus) {this->focus = focus;}
 
 void Display::draw()
 {
+    std::cout << "Start of draw\n";
     window->clear(sf::Color::Black);
     //Get view centered on focus
     if (focus != nullptr)
@@ -21,21 +23,20 @@ void Display::draw()
         window->setView(*view);
     }
     //Maybe reduce this down to one for loop at some point
-    for(auto it = objects.begin(); it != objects.end(); it++)
+    for(int i = 0; i < numObjects; i++)
     {
-        (*it)->draw(window);
+
+        objects[i].draw(window, OrbitMath::Vector3D());
 
     }
-    for(auto it = objectsPaths.begin(); it != objectsPaths.end(); it++)
-    {
-        window->draw(it->data(), it->size(), sf::Lines);
-    }
-
+    //rocket->draw(window, OrbitMath::Vector3D());
     window->display();
+    std::cout << "end of draw\n";
 }
-void Display::setObjects(std::vector<GameObject *> objects)
+void Display::setObjects(CelestialBody * objects,  int numObjects)
 {
     this->objects = objects;
+    this->numObjects = numObjects;
 }
 
 void Display::setWindowSize(float width, float height)
@@ -52,29 +53,5 @@ void Display::zoomWindow(float scale)
 
 bool Display::isWindowOpen() { return window->isOpen(); }
 
-void Display::computerOffsets()
-{
-    std::vector<OrbitMath::Vector3D> focusPoints = focus->getFuturePoints();
-    OrbitMath::Vector3D lastFocusPoint = *(focusPoints.end() -1);
-    OrbitMath::Vector3D focusPosition = focus->getPosition();
-    std::vector<sf::Vertex> vertexArray;
-    std::vector<OrbitMath::Vector3D> currentPoints;
-    objectsPaths.clear();
-    for (auto it = objects.begin(); it != objects.end(); it++)
-    {
-        //This is an attempt to reduce the number of constructors and memory allocations called. not sure if it does much
-        vertexArray.clear();
-        currentPoints.clear();
-        currentPoints = (*it)->getFuturePoints();
-        for (int i = 0; i < currentPoints.size(); i++)
-        {
-            if (i >= focusPoints.size())
-                vertexArray.push_back(sf::Vertex(sf::Vector2f(currentPoints[i].x - lastFocusPoint.x + focusPosition.x, currentPoints[i].y - lastFocusPoint.y + focusPosition.y), ((CelestialBody*)(*it))->getOrbitColor()));
-            else
-                vertexArray.push_back(sf::Vertex(sf::Vector2f(currentPoints[i].x - focusPoints[i].x + focusPosition.x, currentPoints[i].y - focusPoints[i].y + focusPosition.y), ((CelestialBody*)(*it))->getOrbitColor()));
-        }
-        objectsPaths.push_back(vertexArray);
-    }
-}
 
 

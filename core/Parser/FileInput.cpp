@@ -6,8 +6,10 @@
 #include <fstream>
 #include "src/CelestialBody.h"
 #include "src/Vector3D.h"
+#include <fstream>
+#include <sstream>
 
-
+/*
 void FileInput::readFile(std::string filename)
 {
     std::string input_xml;
@@ -24,34 +26,52 @@ void FileInput::readFile(std::string filename)
     xml_copy.push_back('\0');
 
     doc.parse<0>(&xml_copy[0]);
-}
+    std::cout << "Readfile\n";
+}*/
 
-std::vector<GameObject*> FileInput::getObjectsFromFile()
+int FileInput::getObjectsFromFile()
 {
-    objects.clear();
-    readFile("./core/Parser/test.xml");
-    rapidxml::xml_node<> *pRoot = doc.first_node();
-    for (rapidxml::xml_node<> *object_node = pRoot->first_node("Object"); object_node; object_node = object_node->next_sibling("Object"))
+    std::ifstream file("./core/Parser/dubinski.tab");
+    if (!file.is_open())
+        std::cout << "File not found\n";
+
+    std::cout << objects << std::endl;
+    std::stringstream ss;
+    int count = 0;
+    //while(file)
+    for (int i = 0; i < 15000; i ++)
     {
-        rapidxml::xml_node<> *velocity_node = object_node->first_node("Velocity");
-        rapidxml::xml_node<> *position_node = object_node->first_node("Position");
-        if (velocity_node != nullptr && position_node != nullptr)
-        {
-            OrbitMath::Vector3D velocity(std::stod(velocity_node->first_attribute("x")->value()), std::stod(velocity_node->first_attribute("y")->value()), std::stod(velocity_node->first_attribute("z")->value()));
-            OrbitMath::Vector3D position(std::stod(position_node->first_attribute("x")->value()), std::stod(position_node->first_attribute("y")->value()), std::stod(position_node->first_attribute("z")->value()));
-            double mass = std::stod(object_node->first_attribute("mass")->value());
-            double radius = std::stod(object_node->first_attribute("radius")->value());
-            int color = std::stod(object_node->first_attribute("color")->value());
-            this->buildObject(velocity, position, mass, radius, color);
-        }
-        else
-            std::cout << "one of the nodes is null\n";
+        std::string line;
+        getline(file, line);
+        ss << line;
+        double mass;
+        double x;
+        double y;
+        double z;
+        ss >> mass;
+        ss >> x;
+        ss >> y;
+        ss >> z;
+        OrbitMath::Vector3D tempPoistion(x, y, z);
+        ss >> x;
+        ss >> y;
+        ss >> z;
+        OrbitMath::Vector3D tempVelocity(x, y, z);
+        //std::cout << "count:" << count << std::endl; 
+        this->buildObject(tempVelocity, tempPoistion, mass, .25, 1, count);
+        count++;
     }
-    return objects;
+
+
+    return count;
 }
 
-void FileInput::buildObject(OrbitMath::Vector3D velocity, OrbitMath::Vector3D position, double mass, double radius, int color)
+void FileInput::buildObject(OrbitMath::Vector3D velocity, OrbitMath::Vector3D position, double mass, double radius, int color, int count)
 {
-    GameObject * newObject = new CelestialBody(velocity, position, mass, radius, color);
-    objects.push_back(newObject);
+    //GameObject * newObject = new CelestialBody(velocity, position, mass, radius, color);
+    //objects.push_back(newObject);
+    //CelestialBody newbody(velocity, position, mass, radius, color);
+    //std::cout << objects + sizeof(GameObject *) * count << std::endl;
+    objects[count].setValues(velocity, position, mass, radius, color);
+
 }
